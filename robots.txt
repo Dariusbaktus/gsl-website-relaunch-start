@@ -1,0 +1,4 @@
+# Diese Adresse ist eine private Vorschau eines Website-Entwurfs.
+# Keine Suchmaschine soll sie aufnehmen.
+User-agent: *
+Disallow: /

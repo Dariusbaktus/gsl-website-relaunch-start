@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 
-interface Departure {
+export interface DepartureItem {
   vessel: string
   voy: string
   loadWindow: string
@@ -10,7 +10,7 @@ interface Departure {
   destinations: { port: string; date: string }[]
 }
 
-const DEPARTURES: Departure[] = [
+const FALLBACK_DEPARTURES: DepartureItem[] = [
   {
     vessel: 'SOLIDARNOSC',
     voy: 'Voy. 464WM · ab Brake',
@@ -43,7 +43,14 @@ const DEPARTURES: Departure[] = [
   },
 ]
 
-export function DepartureCards({ onUpdateTag }: { onUpdateTag?: (text: string) => void }) {
+export function DepartureCards({
+  items,
+  onUpdateTag,
+}: {
+  items?: DepartureItem[]
+  onUpdateTag?: (text: string) => void
+}) {
+  const departures = items && items.length > 0 ? items : FALLBACK_DEPARTURES
   const [cardsStatus, setCardsStatus] = useState<
     { statusClass: string; cutLabel: string; cutDate: string }[]
   >([])
@@ -54,7 +61,7 @@ export function DepartureCards({ onUpdateTag }: { onUpdateTag?: (text: string) =
     const TAG = 86400000
     const offene: { fenster: string; bis: string }[] = []
 
-    const statusList = DEPARTURES.map((dep) => {
+    const statusList = departures.map((dep) => {
       const t = dep.cutoffDate.match(/^(\d{2})\.(\d{2})\.(\d{4})$/)
       if (!t) return { statusClass: '', cutLabel: 'Buchbar bis', cutDate: dep.cutoffDate }
 
@@ -100,33 +107,38 @@ export function DepartureCards({ onUpdateTag }: { onUpdateTag?: (text: string) =
         onUpdateTag('Aktuelle Abfahrten ab Brake — siehe Fahrpläne')
       }
     }
-  }, [onUpdateTag])
+  }, [departures, onUpdateTag])
 
   return (
     <div className="grid3">
-      {DEPARTURES.map((dep, idx) => {
+      {departures.map((dep, idx) => {
         const info = cardsStatus[idx] || {
           statusClass: '',
           cutLabel: 'Buchbar bis',
           cutDate: dep.cutoffDate,
         }
+
         return (
-          <div key={dep.vessel + idx} className={`sail ${info.statusClass}`}>
-            <div className="v">{dep.vessel}</div>
-            <div className="m">{dep.voy}</div>
-            <div className="lbl">Ladefenster</div>
-            <div className="big">{dep.loadWindow}</div>
-            <div className="to">
-              {dep.destinations.map((dst, dIdx) => (
-                <React.Fragment key={dst.port + dIdx}>
-                  nach <b>{dst.port}</b> · {dst.date}
-                  {dIdx < dep.destinations.length - 1 && <br />}
-                </React.Fragment>
+          <div key={dep.vessel + idx} className={`dep-card ${info.statusClass}`}>
+            <div className="vessel">{dep.vessel}</div>
+            <div className="voy">{dep.voy}</div>
+            <div className="meta">
+              <span className="k">Ladefenster</span>
+              <span className="v">{dep.loadWindow}</span>
+              <span className="k">Ladeschluss</span>
+              <span className="v">{dep.cutoffDate}</span>
+            </div>
+            <div className="dest-title">Bestimmungshäfen &amp; Vorläufige Ankunft</div>
+            <div className="dests">
+              {dep.destinations.map((d, dIdx) => (
+                <div key={dIdx} className="d-row">
+                  <span className="dp">{d.port}</span>
+                  <span className="da">{d.date}</span>
+                </div>
               ))}
             </div>
-            <div className="cut">
-              <span>{info.cutLabel}</span>
-              <b>{info.cutDate}</b>
+            <div className="cut-info">
+              {info.cutLabel} {info.cutDate}
             </div>
           </div>
         )

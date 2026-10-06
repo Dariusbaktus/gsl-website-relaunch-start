@@ -1,18 +1,53 @@
-'use client'
-
-import React, { useState } from 'react'
-import Link from 'next/link'
+import React from 'react'
+import { getPayload } from 'payload'
+import config from '@/payload.config'
 import articlesData from '@/data/articles.json'
+import { NewsListClient, PostItem } from '@/components/NewsListClient'
 
-const CATEGORIES = ['Alle', 'Ladung', 'Routen', 'Menschen', 'Fachwissen', 'Historie']
+export const dynamic = 'force-dynamic'
 
-export default function NewsPage() {
-  const [activeCat, setActiveCat] = useState('Alle')
+export const metadata = {
+  title: 'News · Global Shipping & Logistics GmbH',
+  description:
+    'Handelsrouten, Ladung, Fachwissen und ein bisschen Hafengeschichte — geschrieben von Menschen, die den Kai kennen.',
+}
 
-  const filteredArticles = articlesData.filter((art) => {
-    if (activeCat === 'Alle') return true
-    return art.kat.toLowerCase() === activeCat.toLowerCase()
-  })
+export default async function NewsPage() {
+  let posts: PostItem[] = articlesData.map((a) => ({
+    slug: a.slug,
+    title: a.titel,
+    category: a.kat,
+    month: a.monat,
+    teaser: a.teaser,
+    thumb: a.thumb,
+    alt: a.alt,
+  }))
+
+  try {
+    const payload = await getPayload({ config })
+    const res = await payload.find({
+      collection: 'posts',
+      where: { _status: { equals: 'published' } },
+      sort: '-createdAt',
+    })
+
+    if (res.docs && res.docs.length > 0) {
+      posts = res.docs.map((doc: any, idx: number) => ({
+        slug: doc.slug,
+        title: doc.title,
+        category: doc.category,
+        month: doc.month,
+        teaser: doc.teaser,
+        thumb:
+          typeof doc.thumbnail === 'object' && doc.thumbnail?.url
+            ? doc.thumbnail.url
+            : `/media/news-${(idx % 6) + 1}.jpg`,
+        alt: doc.thumbnailAlt || doc.title,
+      }))
+    }
+  } catch (e) {
+    console.error('Failed to fetch posts from Payload CMS:', e)
+  }
 
   return (
     <div className="page on" id="p-news">
@@ -28,47 +63,7 @@ export default function NewsPage() {
 
       <section className="sec">
         <div className="wrap">
-          <div className="controls">
-            <div className="seg">
-              {CATEGORIES.map((cat) => (
-                <button
-                  key={cat}
-                  className={activeCat === cat ? 'on' : ''}
-                  onClick={() => setActiveCat(cat)}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            {filteredArticles.map((article) => (
-              <Link
-                key={article.slug}
-                href={`/news/${article.slug}`}
-                className="post link"
-                style={{ textDecoration: 'none', color: 'inherit' }}
-              >
-                <div className="thumb hb">
-                  <img
-                    src={article.thumb}
-                    alt={article.alt}
-                    width={700}
-                    height={525}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-                <div>
-                  <span className="cat">{article.kat}</span>
-                  <div className="date">{article.monat}</div>
-                  <h3>{article.titel}</h3>
-                  <p>{article.teaser}</p>
-                </div>
-              </Link>
-            ))}
-          </div>
+          <NewsListClient initialPosts={posts} />
 
           <div className="okbox" style={{ marginTop: 32 }}>
             <h4>Diese sechs Beiträge sind keine Erfindung</h4>

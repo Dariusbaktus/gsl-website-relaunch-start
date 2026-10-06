@@ -1,50 +1,138 @@
-'use client'
-
-import React, { useState } from 'react'
+import React from 'react'
 import Link from 'next/link'
-import { DepartureCards } from '@/components/DepartureCards'
+import { getPayload } from 'payload'
+import config from '@/payload.config'
+import { HomeHeroSection } from '@/components/HomeHeroSection'
+import { DepartureItem } from '@/components/DepartureCards'
 
-export default function HomePage() {
-  const [heroTag, setHeroTag] = useState('Aktuelle Abfahrten ab Brake — siehe Fahrpläne')
+export const dynamic = 'force-dynamic'
+
+export const metadata = {
+  title: 'Global Shipping & Logistics GmbH · Linienagentur Bremen',
+  description:
+    'Linienagentur für Break Bulk, Projektladung und Massengut ab Brake und Wismar nach Nordamerika und in die Karibik.',
+}
+
+const FALLBACK_DEPARTURES: DepartureItem[] = [
+  {
+    vessel: 'SOLIDARNOSC',
+    voy: 'Voy. 464WM · ab Brake',
+    loadWindow: '29 Aug - 03 Sep',
+    cutoffDate: '27.08.2026',
+    destinations: [
+      { port: 'Port Canaveral, FL — ASI', date: '17 Sep' },
+      { port: 'Port Canaveral, FL — GT', date: '18 Sep' },
+    ],
+  },
+  {
+    vessel: 'ULTRA NAVIGATOR',
+    voy: 'Voy. 467WM · ab Brake',
+    loadWindow: '10- 15 Sep',
+    cutoffDate: '03.09.2026',
+    destinations: [
+      { port: 'New Haven, CT', date: '29 Sep' },
+      { port: 'Wilmington, NC', date: '04 Oct' },
+    ],
+  },
+  {
+    vessel: 'ULTRA PIONEER',
+    voy: 'Voy. 468WM · ab Brake',
+    loadWindow: '16 - 21 Sep',
+    cutoffDate: '10.09.2026',
+    destinations: [
+      { port: 'Port Canaveral, FL — ASI', date: '05 Oct' },
+      { port: 'Port Canaveral, FL — GT', date: '06 Oct' },
+    ],
+  },
+]
+
+interface HomePost {
+  slug: string
+  category: string
+  month: string
+  title: string
+  teaser: string
+}
+
+const FALLBACK_POSTS: HomePost[] = [
+  {
+    slug: 'warum-ich-als-neue-hier-schreibe',
+    category: 'Menschen',
+    month: 'September 2026',
+    title: 'Warum ich als Neue hier schreibe',
+    teaser:
+      'Auftakt der Serie: was ein Schiffsmakler eigentlich den ganzen Tag macht — erklärt von jemandem, der es selbst erst lernt.',
+  },
+  {
+    slug: 'zellstoff-die-stille-hauptladung',
+    category: 'Ladung',
+    month: 'Oktober 2026',
+    title: 'Zellstoff — die stille Hauptladung',
+    teaser:
+      '868.146 Tonnen gingen 2024 über Brake. Warum ausgerechnet Zellstoff, und was das für die Stauung bedeutet.',
+  },
+  {
+    slug: 'warum-baltimore-und-wilmington',
+    category: 'Routen',
+    month: 'November 2026',
+    title: 'Warum Baltimore und Wilmington',
+    teaser:
+      'Zwei Häfen, die auf keiner Containerkarte auffallen — und für Break Bulk trotzdem die erste Wahl sind.',
+  },
+]
+
+export default async function HomePage() {
+  let departures: DepartureItem[] = FALLBACK_DEPARTURES
+  let posts: HomePost[] = FALLBACK_POSTS
+
+  try {
+    const payload = await getPayload({ config })
+
+    const depRes = await payload.find({
+      collection: 'departures',
+      where: {
+        vessel: {
+          in: ['SOLIDARNOSC', 'ULTRA NAVIGATOR', 'ULTRA PIONEER'],
+        },
+      },
+      sort: 'order',
+    })
+
+    if (depRes.docs && depRes.docs.length > 0) {
+      departures = depRes.docs.map((d: any) => ({
+        vessel: d.vessel,
+        voy: `${d.voy} · ab ${d.port}`,
+        loadWindow: d.laycan,
+        cutoffDate: d.gateDate,
+        destinations: (d.destinations || []).map((dest: any) => ({
+          port: dest.port,
+          date: dest.eta,
+        })),
+      }))
+    }
+
+    const postRes = await payload.find({
+      collection: 'posts',
+      limit: 3,
+      sort: 'id',
+    })
+
+    if (postRes.docs && postRes.docs.length > 0) {
+      posts = postRes.docs.map((p: any) => ({
+        slug: p.slug,
+        category: p.category,
+        month: p.month,
+        title: p.title,
+        teaser: p.teaser,
+      }))
+    }
+  } catch (e) {
+    console.error('Failed to load dynamic data from Payload:', e)
+  }
 
   return (
     <div className="page on" id="p-home">
-      <section className="hero">
-        <video autoPlay muted loop playsInline poster="">
-          <source src="/videos/hero.mp4" type="video/mp4" />
-        </video>
-        <div className="ov"></div>
-        <div className="wrap">
-          <div className="tag">
-            <span className="dot"></span> {heroTag}
-          </div>
-          <h1>Zuverlässige und professionelle Logistiklösungen weltweit</h1>
-          <p>Unkonventionelles Denken zur Optimierung von Versand- und Logistiklösungen.</p>
-          <div className="acts">
-            <Link href="/fahrplaene" className="btn onDark">
-              Fahrpläne ansehen
-            </Link>
-            <Link href="/kontakt" className="btn ghostDark">
-              Kontakt aufnehmen
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      <section className="sec grey">
-        <div className="wrap">
-          <div className="eyebrow">Aktuelle Abfahrten</div>
-          <h2>Die nächsten Schiffe ab Brake</h2>
-          <div className="rule"></div>
-          <p className="lead" style={{ marginBottom: 32 }}>
-            Automatisch aus der Fahrplandatei. Stand 20.08.2026.
-          </p>
-          <DepartureCards onUpdateTag={setHeroTag} />
-          <Link href="/fahrplaene" className="btn" style={{ marginTop: 28, display: 'inline-block' }}>
-            Alle Abfahrten ansehen
-          </Link>
-        </div>
-      </section>
+      <HomeHeroSection departures={departures} />
 
       <section className="sec">
         <div className="wrap">
@@ -176,84 +264,32 @@ export default function HomePage() {
           <h2>Aus dem Hafen</h2>
           <div className="rule"></div>
           <div className="grid3">
-            <Link
-              href="/news/warum-ich-als-neue-hier-schreibe"
-              className="card link"
-              style={{ textDecoration: 'none', color: 'inherit' }}
-            >
-              <div
-                style={{
-                  fontSize: 11.5,
-                  fontWeight: 700,
-                  letterSpacing: '.07em',
-                  textTransform: 'uppercase',
-                  color: 'var(--red)',
-                  marginBottom: 8,
-                }}
+            {posts.map((post) => (
+              <Link
+                key={post.slug}
+                href={`/news/${post.slug}`}
+                className="card link"
+                style={{ textDecoration: 'none', color: 'inherit' }}
               >
-                Menschen
-              </div>
-              <div style={{ fontSize: 13.5, color: 'var(--muted)', marginBottom: 8 }}>
-                September 2026
-              </div>
-              <h3>Warum ich als Neue hier schreibe</h3>
-              <p style={{ fontSize: 15, color: '#41505C', margin: 0 }}>
-                Auftakt der Serie: was ein Schiffsmakler eigentlich den ganzen Tag macht — erklärt
-                von jemandem, der es selbst erst lernt.
-              </p>
-            </Link>
-            <Link
-              href="/news/zellstoff-die-stille-hauptladung"
-              className="card link"
-              style={{ textDecoration: 'none', color: 'inherit' }}
-            >
-              <div
-                style={{
-                  fontSize: 11.5,
-                  fontWeight: 700,
-                  letterSpacing: '.07em',
-                  textTransform: 'uppercase',
-                  color: 'var(--red)',
-                  marginBottom: 8,
-                }}
-              >
-                Ladung
-              </div>
-              <div style={{ fontSize: 13.5, color: 'var(--muted)', marginBottom: 8 }}>
-                Oktober 2026
-              </div>
-              <h3>Zellstoff — die stille Hauptladung</h3>
-              <p style={{ fontSize: 15, color: '#41505C', margin: 0 }}>
-                868.146 Tonnen gingen 2024 über Brake. Warum ausgerechnet Zellstoff, und was das für
-                die Stauung bedeutet.
-              </p>
-            </Link>
-            <Link
-              href="/news/warum-baltimore-und-wilmington"
-              className="card link"
-              style={{ textDecoration: 'none', color: 'inherit' }}
-            >
-              <div
-                style={{
-                  fontSize: 11.5,
-                  fontWeight: 700,
-                  letterSpacing: '.07em',
-                  textTransform: 'uppercase',
-                  color: 'var(--red)',
-                  marginBottom: 8,
-                }}
-              >
-                Routen
-              </div>
-              <div style={{ fontSize: 13.5, color: 'var(--muted)', marginBottom: 8 }}>
-                November 2026
-              </div>
-              <h3>Warum Baltimore und Wilmington</h3>
-              <p style={{ fontSize: 15, color: '#41505C', margin: 0 }}>
-                Zwei Häfen, die auf keiner Containerkarte auffallen — und für Break Bulk trotzdem
-                die erste Wahl sind.
-              </p>
-            </Link>
+                <div
+                  style={{
+                    fontSize: 11.5,
+                    fontWeight: 700,
+                    letterSpacing: '.07em',
+                    textTransform: 'uppercase',
+                    color: 'var(--red)',
+                    marginBottom: 8,
+                  }}
+                >
+                  {post.category}
+                </div>
+                <div style={{ fontSize: 13.5, color: 'var(--muted)', marginBottom: 8 }}>
+                  {post.month}
+                </div>
+                <h3>{post.title}</h3>
+                <p style={{ fontSize: 15, color: '#41505C', margin: 0 }}>{post.teaser}</p>
+              </Link>
+            ))}
           </div>
           <Link href="/news" className="btn ghost" style={{ marginTop: 28, display: 'inline-block' }}>
             Alle Beiträge

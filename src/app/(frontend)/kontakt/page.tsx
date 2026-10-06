@@ -1,10 +1,53 @@
 'use client'
 
-import React from 'react'
-
-
+import React, { useState } from 'react'
 
 export default function KontaktPage() {
+  const [formData, setFormData] = useState({
+    name: '',
+    company: '',
+    email: '',
+    phone: '',
+    inquiryType: 'Bitte wählen',
+    loadPort: '',
+    destinationPort: '',
+    message: '',
+    gdprConsent: false,
+  })
+
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const [errorMessage, setErrorMessage] = useState('')
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!formData.name || !formData.email || !formData.gdprConsent) {
+      setStatus('error')
+      setErrorMessage('Bitte Name, E-Mail ausfüllen und dem Datenschutzhinweis zustimmen.')
+      return
+    }
+
+    setStatus('loading')
+    setErrorMessage('')
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      })
+
+      const data = await res.json()
+      if (!res.ok) {
+        throw new Error(data.error || 'Fehler beim Senden.')
+      }
+
+      setStatus('success')
+    } catch (err: any) {
+      setStatus('error')
+      setErrorMessage(err.message || 'Die Anfrage konnte nicht gesendet werden.')
+    }
+  }
+
   return (
     <div className="page on" id="p-kontakt">
       <section className="phead">
@@ -20,59 +63,146 @@ export default function KontaktPage() {
             <div>
               <h3>Anfrage stellen</h3>
               <div className="rule"></div>
-              <form className="form" onSubmit={(e) => e.preventDefault()}>
-                <div className="row">
-                  <div>
-                    <label>Name</label>
-                    <input type="text" placeholder="Vor- und Nachname" />
-                  </div>
-                  <div>
-                    <label>Firma</label>
-                    <input type="text" placeholder="Firmenname" />
-                  </div>
+
+              {status === 'success' ? (
+                <div
+                  className="okbox"
+                  style={{
+                    background: '#EDF7F2',
+                    borderColor: '#247A53',
+                    padding: '24px 20px',
+                    borderRadius: '8px',
+                  }}
+                >
+                  <h4 style={{ color: '#247A53', marginBottom: 8 }}>Vielen Dank für Ihre Anfrage!</h4>
+                  <p style={{ margin: 0, color: '#1B4D36' }}>
+                    Ihre Nachricht ist bei uns eingegangen. Unser Team in Bremen wird sich schnellstmöglich bei Ihnen melden.
+                  </p>
                 </div>
-                <div className="row">
-                  <div>
-                    <label>E-Mail</label>
-                    <input type="email" placeholder="name@firma.de" />
+              ) : (
+                <form className="form" onSubmit={handleSubmit}>
+                  {status === 'error' && (
+                    <div
+                      style={{
+                        padding: '12px 16px',
+                        background: '#FDF3F3',
+                        color: '#9E242B',
+                        border: '1px solid #F0D4D5',
+                        borderRadius: 6,
+                        marginBottom: 16,
+                        fontSize: 14,
+                      }}
+                    >
+                      {errorMessage}
+                    </div>
+                  )}
+
+                  <div className="row">
+                    <div>
+                      <label>Name *</label>
+                      <input
+                        type="text"
+                        placeholder="Vor- und Nachname"
+                        required
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <label>Firma</label>
+                      <input
+                        type="text"
+                        placeholder="Firmenname"
+                        value={formData.company}
+                        onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <label>Telefon</label>
-                    <input type="tel" placeholder="optional" />
+                  <div className="row">
+                    <div>
+                      <label>E-Mail *</label>
+                      <input
+                        type="email"
+                        placeholder="name@firma.de"
+                        required
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <label>Telefon</label>
+                      <input
+                        type="tel"
+                        placeholder="optional"
+                        value={formData.phone}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      />
+                    </div>
                   </div>
-                </div>
-                <label>Worum geht es?</label>
-                <select defaultValue="Bitte wählen">
-                  <option>Bitte wählen</option>
-                  <option>Buchungsanfrage Break Bulk</option>
-                  <option>Projektladung / Schwergut</option>
-                  <option>Schüttgut</option>
-                  <option>Vor- und Nachlauf, Zoll, Lager</option>
-                  <option>Allgemeine Anfrage</option>
-                </select>
-                <div className="row">
-                  <div>
-                    <label>Ladehafen</label>
-                    <input type="text" placeholder="z. B. Brake" />
+                  <label>Worum geht es?</label>
+                  <select
+                    value={formData.inquiryType}
+                    onChange={(e) => setFormData({ ...formData, inquiryType: e.target.value })}
+                  >
+                    <option>Bitte wählen</option>
+                    <option>Buchungsanfrage Break Bulk</option>
+                    <option>Projektladung / Schwergut</option>
+                    <option>Schüttgut</option>
+                    <option>Vor- und Nachlauf, Zoll, Lager</option>
+                    <option>Allgemeine Anfrage</option>
+                  </select>
+                  <div className="row">
+                    <div>
+                      <label>Ladehafen</label>
+                      <input
+                        type="text"
+                        placeholder="z. B. Brake"
+                        value={formData.loadPort}
+                        onChange={(e) => setFormData({ ...formData, loadPort: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <label>Zielhafen</label>
+                      <input
+                        type="text"
+                        placeholder="z. B. Wilmington, NC"
+                        value={formData.destinationPort}
+                        onChange={(e) =>
+                          setFormData({ ...formData, destinationPort: e.target.value })
+                        }
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <label>Zielhafen</label>
-                    <input type="text" placeholder="z. B. Wilmington, NC" />
+                  <label>Ihre Nachricht</label>
+                  <textarea
+                    placeholder="Ladungsart, Gewicht, Maße, Wunschtermin — je konkreter, desto schneller die Antwort."
+                    value={formData.message}
+                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                  ></textarea>
+                  <div className="chk">
+                    <input
+                      type="checkbox"
+                      id="ds-chk"
+                      checked={formData.gdprConsent}
+                      onChange={(e) =>
+                        setFormData({ ...formData, gdprConsent: e.target.checked })
+                      }
+                    />
+                    <label htmlFor="ds-chk" style={{ fontWeight: 'normal', fontSize: 'inherit' }}>
+                      Ich habe den Datenschutzhinweis gelesen und stimme der Verarbeitung meiner
+                      Daten zur Bearbeitung dieser Anfrage zu. *
+                    </label>
                   </div>
-                </div>
-                <label>Ihre Nachricht</label>
-                <textarea placeholder="Ladungsart, Gewicht, Maße, Wunschtermin — je konkreter, desto schneller die Antwort."></textarea>
-                <div className="chk">
-                  <input type="checkbox" id="ds-chk" />
-                  <label htmlFor="ds-chk" style={{ fontWeight: 'normal', fontSize: 'inherit' }}>
-                    Ich habe den Datenschutzhinweis gelesen und stimme der Verarbeitung meiner
-                    Daten zur Bearbeitung dieser Anfrage zu.
-                  </label>
-                </div>
-                <button type="submit" className="btn" style={{ border: 0, cursor: 'pointer' }}>
-                  Anfrage absenden
-                </button>
-              </form>
+                  <button
+                    type="submit"
+                    className="btn"
+                    disabled={status === 'loading'}
+                    style={{ border: 0, cursor: status === 'loading' ? 'wait' : 'pointer' }}
+                  >
+                    {status === 'loading' ? 'Wird gesendet...' : 'Anfrage absenden'}
+                  </button>
+                </form>
+              )}
             </div>
             <div>
               <h3>Direkt zur richtigen Person</h3>

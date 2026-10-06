@@ -81,12 +81,93 @@ const FALLBACK_POSTS: HomePost[] = [
   },
 ]
 
+interface HomeShowcaseItem {
+  title: string
+  subtitle: string
+  link: string
+  imageUrl: string
+  imageAlt: string
+}
+
+const FALLBACK_SHOWCASE: HomeShowcaseItem[] = [
+  {
+    title: 'Zellstoff',
+    subtitle: '868.146 t in Brake, 2024',
+    link: '/ladungen',
+    imageUrl: '/media/home-1.jpg',
+    imageAlt: 'Zwei Hafenarbeiter führen ein in Folie verpacktes Zellstoffpaket, das ein Kran an Bord hebt',
+  },
+  {
+    title: 'Stahl & Rohre',
+    subtitle: 'Break Bulk auf Handysize',
+    link: '/ladungen',
+    imageUrl: '/media/home-2.jpg',
+    imageAlt: 'Vier Stahlrohre hängen an Hebegurten über dem geöffneten Laderaum',
+  },
+  {
+    title: 'Projektladung',
+    subtitle: 'Schwergut, unteilbar',
+    link: '/ladungen',
+    imageUrl: '/media/home-3.jpg',
+    imageAlt: 'Ein zylindrisches Schwergutteil steht mit Ketten und Zurrgurten gesichert an Deck',
+  },
+  {
+    title: 'Metalle',
+    subtitle: 'Kupferkathoden und Stückgut',
+    link: '/ladungen',
+    imageUrl: '/media/home-4.jpg',
+    imageAlt: 'Gestapelte Kupferkathoden auf Paletten am Kai',
+  },
+]
+
 export default async function HomePage() {
   let departures: DepartureItem[] = FALLBACK_DEPARTURES
   let posts: HomePost[] = FALLBACK_POSTS
+  let showcase: HomeShowcaseItem[] = FALLBACK_SHOWCASE
+  let heroVideoUrl = '/videos/hero.mp4'
 
   try {
     const payload = await getPayload({ config })
+
+    try {
+      const siteSettings = await payload.findGlobal({
+        slug: 'site-settings',
+        depth: 1,
+      })
+      if (
+        siteSettings?.heroVideo &&
+        typeof siteSettings.heroVideo === 'object' &&
+        siteSettings.heroVideo.url
+      ) {
+        heroVideoUrl = siteSettings.heroVideo.url
+      }
+    } catch (e) {
+      console.warn('Could not load site-settings hero video:', e)
+    }
+
+    try {
+      const pagesRes = await payload.find({
+        collection: 'pages',
+        where: { slug: { equals: 'home' } },
+        depth: 2,
+        draft: false,
+      })
+      if (pagesRes.docs?.[0]?.homeShowcase?.length) {
+        showcase = pagesRes.docs[0].homeShowcase.map((item: any) => ({
+          title: item.title,
+          subtitle: item.subtitle,
+          link: item.link || '/ladungen',
+          imageUrl:
+            typeof item.image === 'object' && (item.image?.sizes?.card?.url || item.image?.url)
+              ? item.image.sizes?.card?.url || item.image.url
+              : '/media/home-1.jpg',
+          imageAlt:
+            (typeof item.image === 'object' && item.image?.alt) || item.title,
+        }))
+      }
+    } catch (e) {
+      console.warn('Could not load home page showcase from Payload:', e)
+    }
 
     const depRes = await payload.find({
       collection: 'departures',
@@ -132,7 +213,7 @@ export default async function HomePage() {
 
   return (
     <div className="page on" id="p-home">
-      <HomeHeroSection departures={departures} />
+      <HomeHeroSection departures={departures} videoUrl={heroVideoUrl} />
 
       <section className="sec">
         <div className="wrap">
@@ -195,62 +276,22 @@ export default async function HomePage() {
             Schüttgut, Break Bulk und Projektladung — ab Brake und Wismar.
           </p>
           <div className="grid4">
-            <Link href="/ladungen" className="ph hb" style={{ textDecoration: 'none' }}>
-              <img
-                src="/media/home-1.jpg"
-                alt="Zwei Hafenarbeiter führen ein in Folie verpacktes Zellstoffpaket, das ein Kran an Bord hebt"
-                width={1000}
-                height={750}
-                loading="lazy"
-                decoding="async"
-              />
-              <div className="cap">
-                <b>Zellstoff</b>
-                <span>868.146 t in Brake, 2024</span>
-              </div>
-            </Link>
-            <Link href="/ladungen" className="ph hb" style={{ textDecoration: 'none' }}>
-              <img
-                src="/media/home-2.jpg"
-                alt="Vier Stahlrohre hängen an Hebegurten über dem geöffneten Laderaum"
-                width={1000}
-                height={750}
-                loading="lazy"
-                decoding="async"
-              />
-              <div className="cap">
-                <b>Stahl &amp; Rohre</b>
-                <span>Break Bulk auf Handysize</span>
-              </div>
-            </Link>
-            <Link href="/ladungen" className="ph hb" style={{ textDecoration: 'none' }}>
-              <img
-                src="/media/home-3.jpg"
-                alt="Ein zylindrisches Schwergutteil steht mit Ketten und Zurrgurten gesichert an Deck"
-                width={1000}
-                height={750}
-                loading="lazy"
-                decoding="async"
-              />
-              <div className="cap">
-                <b>Projektladung</b>
-                <span>Schwergut, unteilbar</span>
-              </div>
-            </Link>
-            <Link href="/ladungen" className="ph hb" style={{ textDecoration: 'none' }}>
-              <img
-                src="/media/home-4.jpg"
-                alt="Gestapelte Kupferkathoden auf Paletten am Kai"
-                width={1000}
-                height={750}
-                loading="lazy"
-                decoding="async"
-              />
-              <div className="cap">
-                <b>Metalle</b>
-                <span>Kupferkathoden und Stückgut</span>
-              </div>
-            </Link>
+            {showcase.map((item, idx) => (
+              <Link key={idx} href={item.link} className="ph hb" style={{ textDecoration: 'none' }}>
+                <img
+                  src={item.imageUrl}
+                  alt={item.imageAlt}
+                  width={1000}
+                  height={750}
+                  loading="lazy"
+                  decoding="async"
+                />
+                <div className="cap">
+                  <b>{item.title}</b>
+                  <span>{item.subtitle}</span>
+                </div>
+              </Link>
+            ))}
           </div>
           <Link href="/ladungen" className="btn" style={{ marginTop: 28, display: 'inline-block' }}>
             Zur Mediathek

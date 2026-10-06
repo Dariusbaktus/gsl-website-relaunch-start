@@ -123,8 +123,11 @@ export default async function NewsDetailPage({ params }: Props) {
             <p className="lead">{post.teaser}</p>
 
             {Array.isArray(post.body) &&
-              post.body.map((block: [string, string], index: number) => {
-                const [type, content] = block
+              post.body.map((block: any, index: number) => {
+                const type = Array.isArray(block) ? block[0] : block?.[0] || block?.['0'] || block?.type
+                const content = Array.isArray(block) ? block[1] : block?.[1] || block?.['1'] || block?.content
+                if (typeof content !== 'string') return null
+
                 if (type === 'h') {
                   return <h3 key={index}>{content}</h3>
                 }

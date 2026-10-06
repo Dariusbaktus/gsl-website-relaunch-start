@@ -1,14 +1,22 @@
 import React from 'react'
 import Link from 'next/link'
 
-export function Footer() {
+interface FooterProps {
+  logoUrl?: string
+  logoAlt?: string
+}
+
+export function Footer({
+  logoUrl = '/images/logo.png',
+  logoAlt = 'GSL',
+}: FooterProps) {
   return (
     <footer>
       <div className="wrap">
         <div className="cols">
           <div className="logoF">
             <Link href="/">
-              <img src="/images/logo.png" alt="GSL" />
+              <img src={logoUrl} alt={logoAlt} />
             </Link>
             <p style={{ margin: 0 }}>
               Global Shipping &amp; Logistics GmbH

@@ -107,15 +107,18 @@ export default async function LadungenPage() {
           <div className="grid3" style={{ gap: 18 }}>
             {items.map((item, idx) => {
               const imgSrc =
-                typeof item.image === 'object' && item.image?.url
-                  ? item.image.url
+                typeof item.image === 'object' && (item.image?.sizes?.card?.url || item.image?.url)
+                  ? item.image.sizes?.card?.url || item.image.url
                   : item.imagePath || `/media/cargo-${idx + 1}.jpg`
+
+              const imgAlt =
+                (typeof item.image === 'object' && item.image?.alt) || item.alt || item.title
 
               return (
                 <div key={item.title} className="ph hb" style={{ aspectRatio: '4/3' }}>
                   <img
                     src={imgSrc}
-                    alt={item.alt || item.title}
+                    alt={imgAlt}
                     width={800}
                     height={600}
                     loading="lazy"

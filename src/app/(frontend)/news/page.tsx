@@ -39,10 +39,14 @@ export default async function NewsPage() {
         month: doc.month,
         teaser: doc.teaser,
         thumb:
-          typeof doc.thumbnail === 'object' && doc.thumbnail?.url
-            ? doc.thumbnail.url
+          typeof doc.thumbnail === 'object' &&
+          (doc.thumbnail?.sizes?.card?.url || doc.thumbnail?.url)
+            ? doc.thumbnail.sizes?.card?.url || doc.thumbnail.url
             : `/media/news-${(idx % 6) + 1}.jpg`,
-        alt: doc.thumbnailAlt || doc.title,
+        alt:
+          (typeof doc.thumbnail === 'object' && doc.thumbnail?.alt) ||
+          doc.thumbnailAlt ||
+          doc.title,
       }))
     }
   } catch (e) {

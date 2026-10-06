@@ -13,6 +13,7 @@ import { Departures } from './collections/Departures'
 import { CargoItems } from './collections/CargoItems'
 import { FormSubmissions } from './collections/FormSubmissions'
 import { NewsletterSubscriptions } from './collections/NewsletterSubscriptions'
+import { SiteSettings } from './globals/SiteSettings'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -35,6 +36,7 @@ export default buildConfig({
     FormSubmissions,
     NewsletterSubscriptions,
   ],
+  globals: [SiteSettings],
   editor: lexicalEditor(),
   sharp,
   secret:

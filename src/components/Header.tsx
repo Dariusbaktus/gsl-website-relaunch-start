@@ -4,7 +4,15 @@ import React, { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
-export function Header() {
+interface HeaderProps {
+  logoUrl?: string
+  logoAlt?: string
+}
+
+export function Header({
+  logoUrl = '/images/logo.png',
+  logoAlt = 'Global Shipping & Logistics GmbH',
+}: HeaderProps) {
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
 
@@ -30,7 +38,7 @@ export function Header() {
       <div className="wrap">
         <div className="logo">
           <Link href="/">
-            <img src="/images/logo.png" alt="Global Shipping & Logistics GmbH" />
+            <img src={logoUrl} alt={logoAlt} />
           </Link>
         </div>
         <button

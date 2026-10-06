@@ -51,5 +51,36 @@ export const Pages: CollectionConfig = {
       name: 'heroSubtitle',
       type: 'textarea',
     },
+    {
+      name: 'homeShowcase',
+      type: 'array',
+      admin: {
+        description: 'Showcase tiles on the homepage (Was wir bewegen)',
+        condition: (data) => data?.slug === 'home',
+      },
+      fields: [
+        {
+          name: 'title',
+          type: 'text',
+          required: true,
+        },
+        {
+          name: 'subtitle',
+          type: 'text',
+          required: true,
+        },
+        {
+          name: 'image',
+          type: 'upload',
+          relationTo: 'media',
+          required: true,
+        },
+        {
+          name: 'link',
+          type: 'text',
+          defaultValue: '/ladungen',
+        },
+      ],
+    },
   ],
 }

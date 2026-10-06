@@ -339,6 +339,75 @@ const PAGES_DATA = [
   },
 ]
 
+const MEDIA_ITEMS = [
+  // Cargo images
+  { filename: 'cargo-1.jpg', alt: 'Verladung von Kistenladung im Hafen Brake', caption: 'Brake · Kistenladung', subDir: 'public/media' },
+  { filename: 'cargo-2.jpg', alt: 'Frachtschiff am Kai in Brake bei der Beladung', caption: 'Brake · Handysize Break Bulk', subDir: 'public/media' },
+  { filename: 'cargo-3.jpg', alt: 'Verladung schwerer Industrieanlagen mit bordeigenem Geschirr', caption: 'Brake · Projektladung', subDir: 'public/media' },
+  { filename: 'cargo-4.jpg', alt: 'Kupferkathoden in Stapeln auf Paletten vor einer Lagerhalle', caption: 'Brake · Kupferkathoden', subDir: 'public/media' },
+  { filename: 'cargo-5.jpg', alt: 'Gestapeltes Rundholz auf dem Kai vor blauem Himmel', caption: 'Brake · Rundholz', subDir: 'public/media' },
+  { filename: 'cargo-6.jpg', alt: 'In Folie verpackte Schnittholzpakete gestapelt am Kai', caption: 'Brake · Schnittholz', subDir: 'public/media' },
+  { filename: 'cargo-7.jpg', alt: 'Ein zylindrisches Schwergutteil hängt an Ketten über gestautem und verzurrtem Schnittholz', caption: 'Wismar · Projektladung', subDir: 'public/media' },
+  { filename: 'cargo-8.jpg', alt: 'Blick in den geöffneten Laderaum vor der Beladung', caption: 'Brake · Laderaum', subDir: 'public/media' },
+  { filename: 'cargo-9.jpg', alt: 'Frachter am Pier in Brake im Abendlicht', caption: 'Brake · Niedersachsenkai', subDir: 'public/media' },
+
+  // Team portraits
+  { filename: 'team-lars-elkjaer.jpg', alt: 'Lars Elkjaer, Managing Partner', caption: 'Lars Elkjaer', subDir: 'public/media' },
+  { filename: 'team-cord-juergens.jpg', alt: 'Cord Jürgens, Director Logistics', caption: 'Cord Jürgens', subDir: 'public/media' },
+  { filename: 'team-kai-juehdes.jpg', alt: 'Kai Jühdes, Senior Chartering Manager Breakbulk', caption: 'Kai Jühdes', subDir: 'public/media' },
+  { filename: 'team-maureen-kobe.jpg', alt: 'Maureen I. Kobe, Customer Service Breakbulk', caption: 'Maureen I. Kobe', subDir: 'public/media' },
+  { filename: 'team-sabine-krueger.jpg', alt: 'Sabine Krüger, Customer Service Breakbulk', caption: 'Sabine Krüger', subDir: 'public/media' },
+  { filename: 'team-matthis-osmers.jpg', alt: 'Matthis Osmers, Customer Service', caption: 'Matthis Osmers', subDir: 'public/media' },
+  { filename: 'team-uwe-albrecht.jpg', alt: 'Uwe M. Albrecht, Port Services · Brake', caption: 'Uwe M. Albrecht', subDir: 'public/media' },
+
+  // News thumbnails
+  { filename: 'news-1.jpg', alt: 'Lkw und Kran bei der Abfertigung am Kai', caption: 'Abfertigung am Kai', subDir: 'public/media' },
+  { filename: 'news-2.jpg', alt: 'Ein Hafenarbeiter neben einem großen, in Folie verpackten Zellstoffpaket am Kai', caption: 'Zellstoff am Kai', subDir: 'public/media' },
+  { filename: 'news-3.jpg', alt: 'Ein Schiff am Kai im Morgenlicht', caption: 'Morgenlicht im Hafen', subDir: 'public/media' },
+  { filename: 'news-4.jpg', alt: 'Ein Gabelstaplerfahrer transportiert eine Ladungspartie am Kai', caption: 'Port Services Brake', subDir: 'public/media' },
+  { filename: 'news-5.jpg', alt: 'Kräne heben eine Traverse über ein Schiff im Hafen', caption: 'Kranarbeit im Hafen', subDir: 'public/media' },
+  { filename: 'news-6.jpg', alt: 'Stahlrohre gestaut im Laderaum eines Schiffes', caption: 'Stauung von Stahlrohren', subDir: 'public/media' },
+
+  // Home preview images
+  { filename: 'home-1.jpg', alt: 'Zwei Hafenarbeiter führen ein in Folie verpacktes Zellstoffpaket, das ein Kran an Bord hebt', caption: 'Zellstoff · 868.146 t in Brake, 2024', subDir: 'public/media' },
+  { filename: 'home-2.jpg', alt: 'Vier Stahlrohre hängen an Hebegurten über dem geöffneten Laderaum', caption: 'Stahl & Rohre · Break Bulk auf Handysize', subDir: 'public/media' },
+  { filename: 'home-3.jpg', alt: 'Ein zylindrisches Schwergutteil steht mit Ketten und Zurrgurten gesichert an Deck', caption: 'Projektladung · Schwergut, unteilbar', subDir: 'public/media' },
+  { filename: 'home-4.jpg', alt: 'Gestapelte Kupferkathoden auf Paletten am Kai', caption: 'Metalle · Kupferkathoden und Stückgut', subDir: 'public/media' },
+
+  // Site Logo
+  { filename: 'logo.png', alt: 'Global Shipping & Logistics GmbH Logo', caption: 'GSL Firmenlogo', subDir: 'public/images' },
+
+  // Hero Video
+  { filename: 'hero.mp4', alt: 'Hafen und Schiffsbewegungen Luftaufnahme', caption: 'Hero Hintergrundvideo', subDir: 'public/videos' },
+]
+
+const HOME_SHOWCASE_DATA = [
+  {
+    title: 'Zellstoff',
+    subtitle: '868.146 t in Brake, 2024',
+    imageFilename: 'home-1.jpg',
+    link: '/ladungen',
+  },
+  {
+    title: 'Stahl & Rohre',
+    subtitle: 'Break Bulk auf Handysize',
+    imageFilename: 'home-2.jpg',
+    link: '/ladungen',
+  },
+  {
+    title: 'Projektladung',
+    subtitle: 'Schwergut, unteilbar',
+    imageFilename: 'home-3.jpg',
+    link: '/ladungen',
+  },
+  {
+    title: 'Metalle',
+    subtitle: 'Kupferkathoden und Stückgut',
+    imageFilename: 'home-4.jpg',
+    link: '/ladungen',
+  },
+]
+
 async function seed() {
   console.log('--- Starting Payload CMS Seeding ---')
   const payload = await getPayload({ config })
@@ -364,31 +433,120 @@ async function seed() {
     console.log('Admin user already exists.')
   }
 
-  // 2. Seed Pages
-  console.log('Seeding Pages...')
-  for (const page of PAGES_DATA) {
+  // 2. Seed Media Collection
+  console.log('Seeding Media collection...')
+  const mediaMap = new Map<string, number>()
+
+  for (const item of MEDIA_ITEMS) {
     const existing = await payload.find({
-      collection: 'pages',
-      where: { slug: { equals: page.slug } },
+      collection: 'media',
+      where: { filename: { equals: item.filename } },
     })
-    if (existing.totalDocs === 0) {
-      await payload.create({
-        collection: 'pages',
-        data: page,
-      })
-      console.log(`Created page: ${page.slug}`)
+
+    if (existing.totalDocs > 0) {
+      const doc = existing.docs[0]
+      mediaMap.set(item.filename, doc.id)
+      console.log(`Media exists: ${item.filename} (ID: ${doc.id})`)
     } else {
-      console.log(`Page exists: ${page.slug}`)
+      const filePath = path.resolve(dirname, `../../${item.subDir}/${item.filename}`)
+      if (!fs.existsSync(filePath)) {
+        console.warn(`Source file not found for media: ${filePath}`)
+        continue
+      }
+
+      try {
+        const doc = await (payload.create as any)({
+          collection: 'media',
+          data: {
+            alt: item.alt,
+            caption: item.caption,
+          },
+          filePath,
+          overwriteExistingFiles: true,
+        })
+        mediaMap.set(item.filename, doc.id)
+        console.log(`Created media doc: ${item.filename} (ID: ${doc.id})`)
+      } catch (err: any) {
+        console.error(`Error uploading media ${item.filename}:`, err?.message || err)
+      }
     }
   }
 
-  // 3. Seed Posts
+  // 3. Seed Site Settings Global (Logo & Hero Video)
+  console.log('Seeding Site Settings global...')
+  const logoId = mediaMap.get('logo.png')
+  const videoId = mediaMap.get('hero.mp4')
+
+  try {
+    await payload.updateGlobal({
+      slug: 'site-settings',
+      data: {
+        siteName: 'Global Shipping & Logistics GmbH',
+        logo: logoId || null,
+        heroVideo: videoId || null,
+      },
+    })
+    console.log('Site Settings updated successfully.')
+  } catch (err: any) {
+    console.error('Error updating Site Settings:', err?.message || err)
+  }
+
+  // 4. Seed Pages (with homeShowcase on 'home')
+  console.log('Seeding Pages...')
+  const homeShowcase = HOME_SHOWCASE_DATA.map((item) => ({
+    title: item.title,
+    subtitle: item.subtitle,
+    image: mediaMap.get(item.imageFilename) || null,
+    link: item.link,
+  }))
+
+  for (const page of PAGES_DATA) {
+    const pageData: any = { ...page }
+    if (page.slug === 'home') {
+      pageData.homeShowcase = homeShowcase
+    }
+
+    const existing = await payload.find({
+      collection: 'pages',
+      where: { slug: { equals: page.slug } },
+      draft: true,
+    })
+
+    if (existing.totalDocs === 0) {
+      await payload.create({
+        collection: 'pages',
+        data: pageData,
+      })
+      console.log(`Created page: ${page.slug}`)
+    } else {
+      const existingDoc = existing.docs[0]
+      if (page.slug === 'home' && (!existingDoc.homeShowcase || existingDoc.homeShowcase.length === 0)) {
+        await payload.update({
+          collection: 'pages',
+          id: existingDoc.id,
+          data: {
+            homeShowcase,
+          },
+        })
+        console.log('Updated home page with homeShowcase.')
+      } else {
+        console.log(`Page exists: ${page.slug}`)
+      }
+    }
+  }
+
+  // 5. Seed Posts (linking thumbnail media)
   console.log('Seeding Posts...')
-  for (const article of ARTICLES) {
+  for (let idx = 0; idx < ARTICLES.length; idx++) {
+    const article = ARTICLES[idx]
+    const thumbFilename = `news-${(idx % 6) + 1}.jpg`
+    const thumbnailId = mediaMap.get(thumbFilename) || null
+
     const existing = await payload.find({
       collection: 'posts',
       where: { slug: { equals: article.slug } },
     })
+
     if (existing.totalDocs === 0) {
       await payload.create({
         collection: 'posts',
@@ -399,6 +557,7 @@ async function seed() {
           month: article.monat,
           teaser: article.teaser,
           statusTag: article.roh ? 'roh' : 'entwurf',
+          thumbnail: thumbnailId,
           thumbnailAlt: article.alt,
           body: article.body,
           _status: 'published',
@@ -406,29 +565,60 @@ async function seed() {
       })
       console.log(`Created post: ${article.slug}`)
     } else {
-      console.log(`Post exists: ${article.slug}`)
+      const existingDoc = existing.docs[0]
+      if (!existingDoc.thumbnail && thumbnailId) {
+        await payload.update({
+          collection: 'posts',
+          id: existingDoc.id,
+          data: {
+            thumbnail: thumbnailId,
+          },
+        })
+        console.log(`Updated post thumbnail: ${article.slug}`)
+      } else {
+        console.log(`Post exists: ${article.slug}`)
+      }
     }
   }
 
-  // 4. Seed Team Members
+  // 6. Seed Team Members (linking portrait media)
   console.log('Seeding Team Members...')
   for (const member of TEAM_MEMBERS) {
+    const portraitFilename = path.basename(member.portraitPath)
+    const portraitId = mediaMap.get(portraitFilename) || null
+
     const existing = await payload.find({
       collection: 'team-members',
       where: { email: { equals: member.email } },
     })
+
     if (existing.totalDocs === 0) {
       await payload.create({
         collection: 'team-members',
-        data: member,
+        data: {
+          ...member,
+          portrait: portraitId,
+        },
       })
       console.log(`Created team member: ${member.name}`)
     } else {
-      console.log(`Team member exists: ${member.name}`)
+      const existingDoc = existing.docs[0]
+      if (!existingDoc.portrait && portraitId) {
+        await payload.update({
+          collection: 'team-members',
+          id: existingDoc.id,
+          data: {
+            portrait: portraitId,
+          },
+        })
+        console.log(`Updated team member portrait: ${member.name}`)
+      } else {
+        console.log(`Team member exists: ${member.name}`)
+      }
     }
   }
 
-  // 5. Seed Departures
+  // 7. Seed Departures
   console.log('Seeding Departures...')
   for (const dep of DEPARTURES) {
     const existing = await payload.find({
@@ -448,21 +638,40 @@ async function seed() {
     }
   }
 
-  // 6. Seed Cargo Items
+  // 8. Seed Cargo Items (linking image media)
   console.log('Seeding Cargo Items...')
   for (const item of CARGO_ITEMS) {
+    const imageFilename = path.basename(item.imagePath)
+    const imageId = mediaMap.get(imageFilename) || null
+
     const existing = await payload.find({
       collection: 'cargo-items',
       where: { title: { equals: item.title } },
     })
+
     if (existing.totalDocs === 0) {
       await payload.create({
         collection: 'cargo-items',
-        data: item,
+        data: {
+          ...item,
+          image: imageId,
+        },
       })
       console.log(`Created cargo item: ${item.title}`)
     } else {
-      console.log(`Cargo item exists: ${item.title}`)
+      const existingDoc = existing.docs[0]
+      if (!existingDoc.image && imageId) {
+        await payload.update({
+          collection: 'cargo-items',
+          id: existingDoc.id,
+          data: {
+            image: imageId,
+          },
+        })
+        console.log(`Updated cargo item image: ${item.title}`)
+      } else {
+        console.log(`Cargo item exists: ${item.title}`)
+      }
     }
   }
 

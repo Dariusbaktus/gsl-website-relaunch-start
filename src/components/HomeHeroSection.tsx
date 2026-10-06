@@ -4,14 +4,20 @@ import React, { useState } from 'react'
 import Link from 'next/link'
 import { DepartureCards, DepartureItem } from '@/components/DepartureCards'
 
-export function HomeHeroSection({ departures }: { departures?: DepartureItem[] }) {
+export function HomeHeroSection({
+  departures,
+  videoUrl = '/videos/hero.mp4',
+}: {
+  departures?: DepartureItem[]
+  videoUrl?: string
+}) {
   const [heroTag, setHeroTag] = useState('Aktuelle Abfahrten ab Brake — siehe Fahrpläne')
 
   return (
     <>
       <section className="hero">
         <video autoPlay muted loop playsInline poster="">
-          <source src="/videos/hero.mp4" type="video/mp4" />
+          <source src={videoUrl} type="video/mp4" />
         </video>
         <div className="ov"></div>
         <div className="wrap">

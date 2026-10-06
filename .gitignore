@@ -31,3 +31,5 @@ playwright-report/
 
 # Payload generated files
 src/payload-types.ts
+public/media/*-*x*.*
+

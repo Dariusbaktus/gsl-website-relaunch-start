@@ -111,16 +111,21 @@ export default async function TeamPage() {
           <div className="grid3" style={{ gap: 18 }}>
             {members.map((member) => {
               const imgSrc =
-                typeof member.portrait === 'object' && member.portrait?.url
-                  ? member.portrait.url
+                typeof member.portrait === 'object' &&
+                (member.portrait?.sizes?.thumbnail?.url || member.portrait?.url)
+                  ? member.portrait.sizes?.thumbnail?.url || member.portrait.url
                   : member.portraitPath || '/media/team-lars-elkjaer.jpg'
+
+              const imgAlt =
+                (typeof member.portrait === 'object' && member.portrait?.alt) ||
+                `${member.name}, ${member.role}`
 
               return (
                 <div key={member.name} className="person">
                   <div className="ava hb">
                     <img
                       src={imgSrc}
-                      alt={`${member.name}, ${member.role}`}
+                      alt={imgAlt}
                       width={600}
                       height={600}
                       loading="lazy"

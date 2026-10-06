@@ -1,0 +1,32 @@
+{
+  "name": "Next.js & Payload CMS",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspace",
+  "remoteUser": "node",
+  "containerUser": "node",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "zsh",
+        "terminal.integrated.profiles.linux": {
+          "zsh": {
+            "path": "/bin/zsh"
+          }
+        }
+      },
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss",
+        "prisma.prisma"
+      ]
+    }
+  },
+  "forwardPorts": [3000, 5432],
+  "containerEnv": {
+    "DATABASE_URL": "postgresql://payload:payload@postgres:5432/payload",
+    "SHELL": "/bin/zsh"
+  },
+  "postCreateCommand": "if [ -f pnpm-lock.yaml ]; then pnpm install; elif [ -f package-lock.json ]; then npm install; elif [ -f yarn.lock ]; then yarn install; elif [ -f package.json ]; then pnpm install; fi"
+}

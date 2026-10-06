@@ -1,0 +1,71 @@
+[
+  {
+    "type": "Handysize Bulker",
+    "voyage": "Reise 26-03",
+    "loadingPort": "Brake",
+    "laycan": "18. – 22. August",
+    "status": "b-open",
+    "statusLabel": "Buchung offen",
+    "cutoff": "15.08.2026",
+    "ports": [
+      {
+        "name": "Baltimore",
+        "eta": "02. Sept"
+      },
+      {
+        "name": "Wilmington",
+        "eta": "06. Sept"
+      },
+      {
+        "name": "Port Canaveral",
+        "eta": "11. Sept"
+      }
+    ]
+  },
+  {
+    "type": "Handysize Bulker",
+    "voyage": "Reise 26-04",
+    "loadingPort": "Brake",
+    "laycan": "15. – 20. September",
+    "status": "b-open",
+    "statusLabel": "Buchung offen",
+    "cutoff": "12.09.2026",
+    "ports": [
+      {
+        "name": "Baltimore",
+        "eta": "30. Sept"
+      },
+      {
+        "name": "New Haven",
+        "eta": "04. Okt"
+      },
+      {
+        "name": "San Juan",
+        "eta": "12. Okt"
+      }
+    ]
+  },
+  {
+    "type": "Handysize Bulker",
+    "voyage": "Reise 26-05",
+    "loadingPort": "Brake",
+    "laycan": "12. – 18. Oktober",
+    "status": "b-ask",
+    "statusLabel": "auf Anfrage",
+    "cutoff": "09.10.2026",
+    "ports": [
+      {
+        "name": "Baltimore",
+        "eta": "28. Okt"
+      },
+      {
+        "name": "Wilmington",
+        "eta": "02. Nov"
+      },
+      {
+        "name": "Lake Charles",
+        "eta": "09. Nov"
+      }
+    ]
+  }
+]

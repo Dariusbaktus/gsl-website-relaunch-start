@@ -1,23 +1,53 @@
 import React from 'react'
 import Link from 'next/link'
+import { draftMode } from 'next/headers'
+import { getPayload } from 'payload'
+import config from '@/payload.config'
+import { PageLivePreview } from '@/components/live-preview/PageLivePreview'
+
+export const dynamic = 'force-dynamic'
 
 export const metadata = {
   title: 'Was der Neuaufbau löst · Global Shipping & Logistics GmbH',
   description: 'Fünf Punkte, die an der heutigen Seite technisch nicht stimmen — und was der Entwurf dahinter jeweils anders macht.',
 }
 
-export default function UeberblickPage() {
+export default async function UeberblickPage() {
+  const { isEnabled: isDraftMode } = await draftMode()
+  let pageDoc: any = null
+
+  try {
+    const payload = await getPayload({ config })
+    const pageRes = await payload.find({
+      collection: 'pages',
+      where: { slug: { equals: 'ueberblick' } },
+      draft: isDraftMode,
+    })
+    if (pageRes.docs?.[0]) {
+      pageDoc = pageRes.docs[0]
+    }
+  } catch (e) {
+    console.warn('Could not fetch ueberblick page from Payload:', e)
+  }
+
+  if (!pageDoc) {
+    pageDoc = {
+      title: 'Was der Neuaufbau löst',
+      slug: 'ueberblick',
+      heroTag: 'Überblick',
+      heroTitle: 'Was der Neuaufbau löst',
+      heroSubtitle:
+        'Fünf Punkte, die an der heutigen Seite technisch nicht stimmen — und was der Entwurf dahinter jeweils anders macht. Alle Befunde sind an der laufenden Website gemessen.',
+    }
+  }
+
   return (
-    <div className="page on" id="p-ueberblick">
-      <section className="phead">
-        <div className="wrap">
-          <h1>Was der Neuaufbau löst</h1>
-          <p>
-            Fünf Punkte, die an der heutigen Seite technisch nicht stimmen — und was der Entwurf
-            dahinter jeweils anders macht. Alle Befunde sind an der laufenden Website gemessen.
-          </p>
-        </div>
-      </section>
+    <PageLivePreview
+      initialPage={pageDoc}
+      fallbackTitle="Was der Neuaufbau löst"
+      fallbackSubtitle="Fünf Punkte, die an der heutigen Seite technisch nicht stimmen — und was der Entwurf dahinter jeweils anders macht. Alle Befunde sind an der laufenden Website gemessen."
+      pageId="p-ueberblick"
+    >
 
       <section className="sec grey" style={{ paddingTop: 34, paddingBottom: 34 }}>
         <div className="wrap">
@@ -218,6 +248,6 @@ export default function UeberblickPage() {
           </Link>
         </div>
       </section>
-    </div>
+    </PageLivePreview>
   )
 }

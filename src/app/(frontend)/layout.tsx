@@ -7,6 +7,8 @@ import { DraftBanner } from '@/components/DraftBanner'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 
+import { AdminProvider } from '@/components/admin/AdminContext'
+
 export const metadata = {
   title: 'Global Shipping & Logistics GmbH',
   description: 'Ihr Partner für weltweite Seetransporte, Breakbulk und Projektladung.',
@@ -34,12 +36,14 @@ export default async function FrontendLayout({ children }: { children: React.Rea
   }
 
   return (
-    <html lang="de">
-      <body>
-        <DraftBanner />
-        <Header logoUrl={logoUrl} logoAlt={logoAlt} />
-        {children}
-        <Footer logoUrl={logoUrl} logoAlt={logoAlt} />
+    <html lang="de" suppressHydrationWarning>
+      <body suppressHydrationWarning>
+        <AdminProvider>
+          <DraftBanner />
+          <Header logoUrl={logoUrl} logoAlt={logoAlt} />
+          {children}
+          <Footer logoUrl={logoUrl} logoAlt={logoAlt} />
+        </AdminProvider>
       </body>
     </html>
   )

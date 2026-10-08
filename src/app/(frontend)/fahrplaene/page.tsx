@@ -1,4 +1,5 @@
 import React from 'react'
+import { draftMode } from 'next/headers'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { ScheduleClient, DepartureRow } from '@/components/ScheduleClient'
@@ -12,10 +13,22 @@ export const metadata = {
 }
 
 export default async function FahrplaenePage() {
+  const { isEnabled: isDraftMode } = await draftMode()
   let rows: DepartureRow[] | undefined = undefined
+  let pageDoc: any = null
 
   try {
     const payload = await getPayload({ config })
+
+    const pageRes = await payload.find({
+      collection: 'pages',
+      where: { slug: { equals: 'fahrplaene' } },
+      draft: isDraftMode,
+    })
+    if (pageRes.docs?.[0]) {
+      pageDoc = pageRes.docs[0]
+    }
+
     const depRes = await payload.find({
       collection: 'departures',
       limit: 50,
@@ -58,5 +71,16 @@ export default async function FahrplaenePage() {
     console.error('Failed to load departures from Payload:', err)
   }
 
-  return <ScheduleClient initialRows={rows} />
+  if (!pageDoc) {
+    pageDoc = {
+      title: 'Fahrpläne',
+      slug: 'fahrplaene',
+      heroTag: 'Fahrpläne',
+      heroTitle: 'Fahrpläne',
+      heroSubtitle:
+        'Abfahrten ab Brake und Wismar Richtung Nordamerika und Karibik. Buchung direkt über uns.',
+    }
+  }
+
+  return <ScheduleClient initialRows={rows} initialPage={pageDoc} />
 }

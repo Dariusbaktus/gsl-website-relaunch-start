@@ -5,6 +5,18 @@ export const Pages: CollectionConfig = {
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'slug', 'updatedAt'],
+    livePreview: {
+      url: ({ data }) => {
+        const serverURL = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3002'
+        const path = data?.slug === 'home' ? '' : `/${data?.slug || ''}`
+        return `${serverURL}${path}`
+      },
+    },
+    preview: (data) => {
+      const serverURL = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3002'
+      const path = data?.slug === 'home' ? '' : `/${data?.slug || ''}`
+      return `${serverURL}/api/draft?url=${encodeURIComponent(path || '/')}`
+    },
   },
   versions: {
     drafts: true,

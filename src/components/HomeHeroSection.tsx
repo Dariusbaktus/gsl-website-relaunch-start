@@ -3,15 +3,24 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
 import { DepartureCards, DepartureItem } from '@/components/DepartureCards'
+import { InlineText } from '@/components/admin/InlineText'
 
 export function HomeHeroSection({
   departures,
   videoUrl = '/videos/hero.mp4',
+  heroTitle = 'Zuverlässige und professionelle Logistiklösungen weltweit',
+  heroSubtitle = 'Unkonventionelles Denken zur Optimierung von Versand- und Logistiklösungen.',
+  initialHeroTag = 'Aktuelle Abfahrten ab Brake — siehe Fahrpläne',
+  pageId,
 }: {
   departures?: DepartureItem[]
   videoUrl?: string
+  heroTitle?: string
+  heroSubtitle?: string
+  initialHeroTag?: string
+  pageId?: string | number
 }) {
-  const [heroTag, setHeroTag] = useState('Aktuelle Abfahrten ab Brake — siehe Fahrpläne')
+  const [heroTag, setHeroTag] = useState(initialHeroTag)
 
   return (
     <>
@@ -22,10 +31,37 @@ export function HomeHeroSection({
         <div className="ov"></div>
         <div className="wrap">
           <div className="tag">
-            <span className="dot"></span> {heroTag}
+            <span className="dot"></span>{' '}
+            <InlineText
+              collection="pages"
+              id={pageId}
+              field="heroTag"
+              value={heroTag}
+              label="Kategorie / Tagline"
+              fallback="Aktuelle Abfahrten ab Brake — siehe Fahrpläne"
+            />
           </div>
-          <h1>Zuverlässige und professionelle Logistiklösungen weltweit</h1>
-          <p>Unkonventionelles Denken zur Optimierung von Versand- und Logistiklösungen.</p>
+          <h1>
+            <InlineText
+              collection="pages"
+              id={pageId}
+              field="heroTitle"
+              value={heroTitle}
+              label="Hauptüberschrift (Hero Title)"
+              fallback="Zuverlässige und professionelle Logistiklösungen weltweit"
+            />
+          </h1>
+          <p>
+            <InlineText
+              collection="pages"
+              id={pageId}
+              field="heroSubtitle"
+              value={heroSubtitle}
+              label="Untertitel / Beschreibung"
+              multiline
+              fallback="Unkonventionelles Denken zur Optimierung von Versand- und Logistiklösungen."
+            />
+          </p>
           <div className="acts">
             <Link href="/fahrplaene" className="btn onDark">
               Fahrpläne ansehen

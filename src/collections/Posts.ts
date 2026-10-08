@@ -5,6 +5,16 @@ export const Posts: CollectionConfig = {
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'category', 'month', '_status', 'updatedAt'],
+    livePreview: {
+      url: ({ data }) => {
+        const serverURL = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3002'
+        return `${serverURL}/news/${data?.slug || ''}`
+      },
+    },
+    preview: (data) => {
+      const serverURL = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3002'
+      return `${serverURL}/api/draft?url=${encodeURIComponent(`/news/${data?.slug || ''}`)}`
+    },
   },
   versions: {
     drafts: true,
@@ -68,7 +78,8 @@ export const Posts: CollectionConfig = {
     {
       name: 'body',
       type: 'json',
-      required: true,
+      required: false,
+      defaultValue: [],
       admin: {
         description: 'Structured array of content tuples [type, text]',
       },

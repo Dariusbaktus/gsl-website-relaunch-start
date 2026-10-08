@@ -1,6 +1,9 @@
 'use client'
 
 import React, { useState, useRef } from 'react'
+import { useLivePreview } from '@payloadcms/live-preview-react'
+import { FrontendAdminBar } from '@/components/admin/FrontendAdminBar'
+import { EditableSection } from '@/components/admin/EditableSection'
 
 export interface DepartureRow {
   vessel: string
@@ -221,7 +224,23 @@ const FALLBACK_ROWS: DepartureRow[] = [
   },
 ]
 
-export function ScheduleClient({ initialRows }: { initialRows?: DepartureRow[] }) {
+export function ScheduleClient({
+  initialRows,
+  initialPage,
+}: {
+  initialRows?: DepartureRow[]
+  initialPage?: any
+}) {
+  const { data: page } = useLivePreview<any>({
+    initialData: initialPage || {
+      title: 'Fahrpläne',
+      heroTitle: 'Fahrpläne',
+      heroSubtitle: 'Abfahrten ab Brake und Wismar Richtung Nordamerika und Karibik. Buchung direkt über uns.',
+    },
+    serverURL: process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3002',
+    depth: 2,
+  })
+
   const rows = initialRows && initialRows.length > 0 ? initialRows : FALLBACK_ROWS
   const [activeTab, setActiveTab] = useState(0)
   const [statusMessage, setStatusMessage] = useState<{
@@ -296,19 +315,33 @@ export function ScheduleClient({ initialRows }: { initialRows?: DepartureRow[] }
   }
 
   return (
-    <div className="page on" id="p-fahrplaene">
-      <section className="phead">
-        <div className="wrap">
-          <h1>Fahrpläne</h1>
-          <p>
-            Abfahrten ab Brake und Wismar Richtung Nordamerika und Karibik. Buchung direkt über
-            uns.
-          </p>
-          <div className="tag" style={{ marginTop: 20 }}>
-            <span className="dot"></span> Stand 20.08.2026 · automatisch aus der Fahrplandatei
-          </div>
-        </div>
-      </section>
+    <>
+      <FrontendAdminBar
+        collection="pages"
+        id={page?.id}
+        title={page?.title || 'Fahrpläne'}
+        status={page?._status || 'published'}
+      />
+
+      <div className="page on" id="p-fahrplaene">
+        <EditableSection
+          collection="pages"
+          id={page?.id}
+          title="Fahrplan-Kopf bearbeiten"
+        >
+          <section className="phead">
+            <div className="wrap">
+              <h1>{page?.heroTitle || page?.title || 'Fahrpläne'}</h1>
+              <p>
+                {page?.heroSubtitle ||
+                  'Abfahrten ab Brake und Wismar Richtung Nordamerika und Karibik. Buchung direkt über uns.'}
+              </p>
+              <div className="tag" style={{ marginTop: 20 }}>
+                <span className="dot"></span> {page?.heroTag || 'Stand 20.08.2026 · automatisch aus der Fahrplandatei'}
+              </div>
+            </div>
+          </section>
+        </EditableSection>
 
       <section className="sec">
         <div className="wrap">
@@ -509,5 +542,6 @@ export function ScheduleClient({ initialRows }: { initialRows?: DepartureRow[] }
         </div>
       </section>
     </div>
-  )
+  </>
+)
 }

@@ -1,15 +1,20 @@
 import React from 'react'
+import { draftMode } from 'next/headers'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
+import { PageLivePreview } from '@/components/live-preview/PageLivePreview'
+import { EditableSection } from '@/components/admin/EditableSection'
 
 export const dynamic = 'force-dynamic'
 
 export const metadata = {
   title: 'Team · Global Shipping & Logistics GmbH',
-  description: 'Sieben Menschen in Bremen. Sie erreichen jede und jeden direkt — ohne Zentrale, ohne Weiterleitung.',
+  description:
+    'Sieben Menschen in Bremen. Sie erreichen jede und jeden direkt — ohne Zentrale, ohne Weiterleitung.',
 }
 
 interface TeamMemberData {
+  id?: string | number
   name: string
   role: string
   portraitPath?: string
@@ -79,10 +84,22 @@ const FALLBACK_MEMBERS: TeamMemberData[] = [
 ]
 
 export default async function TeamPage() {
+  const { isEnabled: isDraftMode } = await draftMode()
   let members: TeamMemberData[] = FALLBACK_MEMBERS
+  let pageDoc: any = null
 
   try {
     const payload = await getPayload({ config })
+
+    const pageRes = await payload.find({
+      collection: 'pages',
+      where: { slug: { equals: 'team' } },
+      draft: isDraftMode,
+    })
+    if (pageRes.docs?.[0]) {
+      pageDoc = pageRes.docs[0]
+    }
+
     const res = await payload.find({
       collection: 'team-members',
       sort: 'order',
@@ -94,18 +111,24 @@ export default async function TeamPage() {
     console.error('Failed to fetch team members from Payload:', e)
   }
 
-  return (
-    <div className="page on" id="p-team">
-      <section className="phead">
-        <div className="wrap">
-          <h1>Team</h1>
-          <p>
-            Sieben Menschen in Bremen. Sie erreichen jede und jeden direkt — ohne Zentrale, ohne
-            Weiterleitung.
-          </p>
-        </div>
-      </section>
+  if (!pageDoc) {
+    pageDoc = {
+      title: 'Team',
+      slug: 'team',
+      heroTag: 'Team',
+      heroTitle: 'Sieben Menschen in Bremen.',
+      heroSubtitle:
+        'Sie erreichen jede und jeden direkt — ohne Zentrale, ohne Weiterleitung.',
+    }
+  }
 
+  return (
+    <PageLivePreview
+      initialPage={pageDoc}
+      fallbackTitle="Team"
+      fallbackSubtitle="Sieben Menschen in Bremen. Sie erreichen jede und jeden direkt — ohne Zentrale, ohne Weiterleitung."
+      pageId="p-team"
+    >
       <section className="sec">
         <div className="wrap">
           <div className="grid3" style={{ gap: 18 }}>
@@ -121,32 +144,39 @@ export default async function TeamPage() {
                 `${member.name}, ${member.role}`
 
               return (
-                <div key={member.name} className="person">
-                  <div className="ava hb">
-                    <img
-                      src={imgSrc}
-                      alt={imgAlt}
-                      width={600}
-                      height={600}
-                      loading="lazy"
-                      decoding="async"
-                    />
+                <EditableSection
+                  key={member.name}
+                  collection="team-members"
+                  id={member.id}
+                  title={`${member.name} bearbeiten`}
+                >
+                  <div className="person">
+                    <div className="ava hb">
+                      <img
+                        src={imgSrc}
+                        alt={imgAlt}
+                        width={600}
+                        height={600}
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </div>
+                    <h4>{member.name}</h4>
+                    <div className="role">{member.role}</div>
+                    <div className="c">
+                      {member.phone}
+                      <br />
+                      {member.mobile ? member.mobile : <span>&nbsp;</span>}
+                      <br />
+                      <a href={`mailto:${member.email}`}>{member.email}</a>
+                    </div>
                   </div>
-                  <h4>{member.name}</h4>
-                  <div className="role">{member.role}</div>
-                  <div className="c">
-                    {member.phone}
-                    <br />
-                    {member.mobile ? member.mobile : <span>&nbsp;</span>}
-                    <br />
-                    <a href={`mailto:${member.email}`}>{member.email}</a>
-                  </div>
-                </div>
+                </EditableSection>
               )
             })}
           </div>
         </div>
       </section>
-    </div>
+    </PageLivePreview>
   )
 }

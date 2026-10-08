@@ -1,23 +1,53 @@
 import React from 'react'
+import { draftMode } from 'next/headers'
+import { getPayload } from 'payload'
+import config from '@/payload.config'
+import { PageLivePreview } from '@/components/live-preview/PageLivePreview'
+
+export const dynamic = 'force-dynamic'
 
 export const metadata = {
   title: 'Leistungen · Global Shipping & Logistics GmbH',
-  description: 'Schüttgut, Break Bulk und Projektladung ab der deutschen Küste — mit Vor- und Nachlauf, Zoll und Lagerung aus einer Hand.',
+  description:
+    'Schüttgut, Break Bulk und Projektladung ab der deutschen Küste — mit Vor- und Nachlauf, Zoll und Lagerung aus einer Hand.',
 }
 
-export default function LeistungenPage() {
-  return (
-    <div className="page on" id="p-leistungen">
-      <section className="phead">
-        <div className="wrap">
-          <h1>Leistungen</h1>
-          <p>
-            Schüttgut, Break Bulk und Projektladung ab der deutschen Küste — mit Vor- und Nachlauf,
-            Zoll und Lagerung aus einer Hand.
-          </p>
-        </div>
-      </section>
+export default async function LeistungenPage() {
+  const { isEnabled: isDraftMode } = await draftMode()
+  let pageDoc: any = null
 
+  try {
+    const payload = await getPayload({ config })
+    const res = await payload.find({
+      collection: 'pages',
+      where: { slug: { equals: 'leistungen' } },
+      draft: isDraftMode,
+    })
+    if (res.docs?.[0]) {
+      pageDoc = res.docs[0]
+    }
+  } catch (e) {
+    console.warn('Could not fetch leistungen page from Payload:', e)
+  }
+
+  if (!pageDoc) {
+    pageDoc = {
+      title: 'Leistungen',
+      slug: 'leistungen',
+      heroTag: 'Leistungen',
+      heroTitle: 'Was wir transportieren und wie wir arbeiten.',
+      heroSubtitle:
+        'Schüttgut, Break Bulk und Projektladung ab der deutschen Küste — mit Vor- und Nachlauf, Zoll und Lagerung aus einer Hand.',
+    }
+  }
+
+  return (
+    <PageLivePreview
+      initialPage={pageDoc}
+      fallbackTitle="Leistungen"
+      fallbackSubtitle="Schüttgut, Break Bulk und Projektladung ab der deutschen Küste — mit Vor- und Nachlauf, Zoll und Lagerung aus einer Hand."
+      pageId="p-leistungen"
+    >
       <section className="sec">
         <div className="wrap">
           <div className="grid2" style={{ gap: 20 }}>
@@ -80,6 +110,6 @@ export default function LeistungenPage() {
           </div>
         </div>
       </section>
-    </div>
+    </PageLivePreview>
   )
 }

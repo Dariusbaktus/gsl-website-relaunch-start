@@ -2,10 +2,12 @@
 
 import React, { useState } from 'react'
 import Link from 'next/link'
+import { EditableSection } from '@/components/admin/EditableSection'
 
 const CATEGORIES = ['Alle', 'Ladung', 'Routen', 'Menschen', 'Fachwissen', 'Historie']
 
 export interface PostItem {
+  id?: string | number
   slug: string
   title: string
   category: string
@@ -20,7 +22,7 @@ export function NewsListClient({ initialPosts }: { initialPosts: PostItem[] }) {
 
   const filtered = initialPosts.filter((art) => {
     if (activeCat === 'Alle') return true
-    return art.category.toLowerCase() === activeCat.toLowerCase()
+    return art.category?.toLowerCase() === activeCat.toLowerCase()
   })
 
   return (
@@ -41,29 +43,36 @@ export function NewsListClient({ initialPosts }: { initialPosts: PostItem[] }) {
 
       <div>
         {filtered.map((article) => (
-          <Link
+          <EditableSection
             key={article.slug}
-            href={`/news/${article.slug}`}
-            className="post link"
-            style={{ textDecoration: 'none', color: 'inherit' }}
+            collection="posts"
+            id={article.id}
+            title={`${article.title} bearbeiten`}
+            style={{ marginBottom: 16 }}
           >
-            <div className="thumb hb">
-              <img
-                src={article.thumb || '/media/news-1.jpg'}
-                alt={article.alt || article.title}
-                width={700}
-                height={525}
-                loading="lazy"
-                decoding="async"
-              />
-            </div>
-            <div>
-              <span className="cat">{article.category}</span>
-              <div className="date">{article.month}</div>
-              <h3>{article.title}</h3>
-              <p>{article.teaser}</p>
-            </div>
-          </Link>
+            <Link
+              href={`/news/${article.slug}`}
+              className="post link"
+              style={{ textDecoration: 'none', color: 'inherit' }}
+            >
+              <div className="thumb hb">
+                <img
+                  src={article.thumb || '/media/news-1.jpg'}
+                  alt={article.alt || article.title}
+                  width={700}
+                  height={525}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+              <div>
+                <span className="cat">{article.category}</span>
+                <div className="date">{article.month}</div>
+                <h3>{article.title}</h3>
+                <p>{article.teaser}</p>
+              </div>
+            </Link>
+          </EditableSection>
         ))}
       </div>
     </>

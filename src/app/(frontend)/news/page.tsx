@@ -1,8 +1,10 @@
 import React from 'react'
+import { draftMode } from 'next/headers'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 import articlesData from '@/data/articles.json'
 import { NewsListClient, PostItem } from '@/components/NewsListClient'
+import { PageLivePreview } from '@/components/live-preview/PageLivePreview'
 
 export const dynamic = 'force-dynamic'
 
@@ -13,6 +15,7 @@ export const metadata = {
 }
 
 export default async function NewsPage() {
+  const { isEnabled: isDraftMode } = await draftMode()
   let posts: PostItem[] = articlesData.map((a) => ({
     slug: a.slug,
     title: a.titel,
@@ -22,17 +25,30 @@ export default async function NewsPage() {
     thumb: a.thumb,
     alt: a.alt,
   }))
+  let pageDoc: any = null
 
   try {
     const payload = await getPayload({ config })
+
+    const pageRes = await payload.find({
+      collection: 'pages',
+      where: { slug: { equals: 'news' } },
+      draft: isDraftMode,
+    })
+    if (pageRes.docs?.[0]) {
+      pageDoc = pageRes.docs[0]
+    }
+
     const res = await payload.find({
       collection: 'posts',
-      where: { _status: { equals: 'published' } },
+      where: isDraftMode ? {} : { _status: { equals: 'published' } },
       sort: '-createdAt',
+      draft: isDraftMode,
     })
 
     if (res.docs && res.docs.length > 0) {
       posts = res.docs.map((doc: any, idx: number) => ({
+        id: doc.id,
         slug: doc.slug,
         title: doc.title,
         category: doc.category,
@@ -53,18 +69,24 @@ export default async function NewsPage() {
     console.error('Failed to fetch posts from Payload CMS:', e)
   }
 
-  return (
-    <div className="page on" id="p-news">
-      <section className="phead">
-        <div className="wrap">
-          <h1>News</h1>
-          <p>
-            Handelsrouten, Ladung, Fachwissen und ein bisschen Hafengeschichte — geschrieben von
-            Menschen, die den Kai kennen.
-          </p>
-        </div>
-      </section>
+  if (!pageDoc) {
+    pageDoc = {
+      title: 'News',
+      slug: 'news',
+      heroTag: 'News & Einblicke',
+      heroTitle: 'News',
+      heroSubtitle:
+        'Handelsrouten, Ladung, Fachwissen und ein bisschen Hafengeschichte — geschrieben von Menschen, die den Kai kennen.',
+    }
+  }
 
+  return (
+    <PageLivePreview
+      initialPage={pageDoc}
+      fallbackTitle="News"
+      fallbackSubtitle="Handelsrouten, Ladung, Fachwissen und ein bisschen Hafengeschichte — geschrieben von Menschen, die den Kai kennen."
+      pageId="p-news"
+    >
       <section className="sec">
         <div className="wrap">
           <NewsListClient initialPosts={posts} />
@@ -82,6 +104,6 @@ export default async function NewsPage() {
           </div>
         </div>
       </section>
-    </div>
+    </PageLivePreview>
   )
 }

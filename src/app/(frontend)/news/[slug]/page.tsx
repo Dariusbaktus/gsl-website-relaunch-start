@@ -1,9 +1,10 @@
 import React from 'react'
-import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { draftMode } from 'next/headers'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 import articlesData from '@/data/articles.json'
+import { NewsDetailLivePreview } from '@/components/live-preview/NewsDetailLivePreview'
 
 export const dynamic = 'force-dynamic'
 
@@ -21,6 +22,7 @@ export async function generateMetadata({ params }: Props) {
     const res = await payload.find({
       collection: 'posts',
       where: { slug: { equals: slug } },
+      draft: true,
     })
     if (res.docs && res.docs.length > 0) {
       title = `${res.docs[0].title} · GSL News`
@@ -39,6 +41,7 @@ export async function generateMetadata({ params }: Props) {
 
 export default async function NewsDetailPage({ params }: Props) {
   const { slug } = await params
+  const { isEnabled: isDraftMode } = await draftMode()
 
   let post: any = null
   let allPosts: any[] = []
@@ -48,6 +51,7 @@ export default async function NewsDetailPage({ params }: Props) {
     const res = await payload.find({
       collection: 'posts',
       where: { slug: { equals: slug } },
+      draft: isDraftMode,
     })
     if (res.docs && res.docs.length > 0) {
       post = res.docs[0]
@@ -55,9 +59,10 @@ export default async function NewsDetailPage({ params }: Props) {
 
     const allRes = await payload.find({
       collection: 'posts',
-      where: { _status: { equals: 'published' } },
+      where: isDraftMode ? {} : { _status: { equals: 'published' } },
       sort: '-createdAt',
       limit: 10,
+      draft: isDraftMode,
     })
     allPosts = allRes.docs
   } catch (e) {
@@ -89,95 +94,5 @@ export default async function NewsDetailPage({ params }: Props) {
 
   const related = allPosts.filter((p: any) => p.slug !== slug).slice(0, 3)
 
-  return (
-    <div className="page on" id="p-beitrag">
-      <section className="phead">
-        <div className="wrap">
-          <Link href="/news" className="back">
-            ← Zurück zur Übersicht
-          </Link>
-          <span className="bkat">{post.category}</span>
-          <h1 className="btitel">{post.title}</h1>
-          <div className="bmeta">
-            <span>{post.month}</span>
-            <span>·</span>
-            <span>Global Shipping &amp; Logistics GmbH</span>
-            <span>·</span>
-            <span>Lesezeit ca. 3 Minuten</span>
-          </div>
-          {post.statusTag === 'roh' ? (
-            <div className="bhinweis" style={{ background: '#FDF7E8', borderColor: '#E5C158', color: '#6E520A' }}>
-              <b>Stand: Rohfassung</b> — Vor-Ort-Recherche in Brake und Begleitung der Schicht stehen noch aus.
-            </div>
-          ) : (
-            <div className="bhinweis">
-              <b>Stand: Entwurf</b> — Text aus dem Redaktionsplan zur Abstimmung. Fachliche Prüfung steht noch aus.
-            </div>
-          )}
-        </div>
-      </section>
-
-      <section className="sec">
-        <div className="wrap">
-          <div className="bbody">
-            <p className="lead">{post.teaser}</p>
-
-            {Array.isArray(post.body) &&
-              post.body.map((block: any, index: number) => {
-                const type = Array.isArray(block) ? block[0] : block?.[0] || block?.['0'] || block?.type
-                const content = Array.isArray(block) ? block[1] : block?.[1] || block?.['1'] || block?.content
-                if (typeof content !== 'string') return null
-
-                if (type === 'h') {
-                  return <h3 key={index}>{content}</h3>
-                }
-                if (type === 'p') {
-                  return <p key={index}>{content}</p>
-                }
-                if (type === 'b') {
-                  const items = content.split(' | ')
-                  return (
-                    <ul key={index}>
-                      {items.map((item, i) => (
-                        <li key={i}>{item}</li>
-                      ))}
-                    </ul>
-                  )
-                }
-                if (type === 'q') {
-                  return (
-                    <blockquote key={index} style={{ borderLeft: '3px solid var(--red)', paddingLeft: 16, margin: '20px 0', fontStyle: 'italic', color: 'var(--navy)' }}>
-                      {content}
-                    </blockquote>
-                  )
-                }
-                return null
-              })}
-          </div>
-
-          <div className="bweiter">
-            <h3>Weitere Beiträge</h3>
-            <div className="grid3" style={{ gap: 18 }}>
-              {related.map((rel: any) => (
-                <Link
-                  key={rel.slug}
-                  href={`/news/${rel.slug}`}
-                  className="card link"
-                  style={{ textDecoration: 'none', color: 'inherit' }}
-                >
-                  <span className="cat" style={{ display: 'inline-block', fontSize: '11.5px', fontWeight: 700, letterSpacing: '.07em', textTransform: 'uppercase', color: 'var(--red)', marginBottom: 8 }}>
-                    {rel.category || rel.kat}
-                  </span>
-                  <div style={{ fontSize: '13.5px', color: 'var(--muted)', marginBottom: 6 }}>
-                    {rel.month || rel.monat}
-                  </div>
-                  <h4 style={{ margin: 0, color: 'var(--navy)' }}>{rel.title || rel.titel}</h4>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
-  )
+  return <NewsDetailLivePreview initialPost={post} relatedPosts={related} />
 }

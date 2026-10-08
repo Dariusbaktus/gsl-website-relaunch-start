@@ -1,15 +1,20 @@
 import React from 'react'
+import { draftMode } from 'next/headers'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
+import { PageLivePreview } from '@/components/live-preview/PageLivePreview'
+import { EditableSection } from '@/components/admin/EditableSection'
 
 export const dynamic = 'force-dynamic'
 
 export const metadata = {
   title: 'Ladungen & Flotte · Global Shipping & Logistics GmbH',
-  description: 'Neun Aufnahmen aus dem laufenden Umschlag. Alle Fotos zeigen reale Verladungen an unseren Ladeplätzen.',
+  description:
+    'Neun Aufnahmen aus dem laufenden Umschlag. Alle Fotos zeigen reale Verladungen an unseren Ladeplätzen.',
 }
 
 interface CargoItemData {
+  id?: string | number
   imagePath?: string
   image?: any
   title: string
@@ -75,10 +80,22 @@ const FALLBACK_ITEMS: CargoItemData[] = [
 ]
 
 export default async function LadungenPage() {
+  const { isEnabled: isDraftMode } = await draftMode()
   let items: CargoItemData[] = FALLBACK_ITEMS
+  let pageDoc: any = null
 
   try {
     const payload = await getPayload({ config })
+
+    const pageRes = await payload.find({
+      collection: 'pages',
+      where: { slug: { equals: 'ladungen' } },
+      draft: isDraftMode,
+    })
+    if (pageRes.docs?.[0]) {
+      pageDoc = pageRes.docs[0]
+    }
+
     const res = await payload.find({
       collection: 'cargo-items',
       sort: 'order',
@@ -90,18 +107,24 @@ export default async function LadungenPage() {
     console.error('Failed to fetch cargo items from Payload:', e)
   }
 
-  return (
-    <div className="page on" id="p-ladungen">
-      <section className="phead">
-        <div className="wrap">
-          <h1>Ladungen &amp; Flotte</h1>
-          <p>
-            Neun Aufnahmen aus dem laufenden Umschlag. Alle Fotos zeigen reale Verladungen an unseren
-            Ladeplätzen.
-          </p>
-        </div>
-      </section>
+  if (!pageDoc) {
+    pageDoc = {
+      title: 'Ladungen & Flotte',
+      slug: 'ladungen',
+      heroTag: 'Ladungen & Flotte',
+      heroTitle: 'Ladungen & Flotte',
+      heroSubtitle:
+        'Neun Aufnahmen aus dem laufenden Umschlag. Alle Fotos zeigen reale Verladungen an unseren Ladeplätzen.',
+    }
+  }
 
+  return (
+    <PageLivePreview
+      initialPage={pageDoc}
+      fallbackTitle="Ladungen & Flotte"
+      fallbackSubtitle="Neun Aufnahmen aus dem laufenden Umschlag. Alle Fotos zeigen reale Verladungen an unseren Ladeplätzen."
+      pageId="p-ladungen"
+    >
       <section className="sec">
         <div className="wrap">
           <div className="grid3" style={{ gap: 18 }}>
@@ -115,25 +138,32 @@ export default async function LadungenPage() {
                 (typeof item.image === 'object' && item.image?.alt) || item.alt || item.title
 
               return (
-                <div key={item.title} className="ph hb" style={{ aspectRatio: '4/3' }}>
-                  <img
-                    src={imgSrc}
-                    alt={imgAlt}
-                    width={800}
-                    height={600}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                  <div className="cap">
-                    <b>{item.title}</b>
-                    <span>{item.location}</span>
+                <EditableSection
+                  key={item.title}
+                  collection="cargo-items"
+                  id={item.id}
+                  title={`${item.title} bearbeiten`}
+                >
+                  <div className="ph hb" style={{ aspectRatio: '4/3' }}>
+                    <img
+                      src={imgSrc}
+                      alt={imgAlt}
+                      width={800}
+                      height={600}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <div className="cap">
+                      <b>{item.title}</b>
+                      <span>{item.location}</span>
+                    </div>
                   </div>
-                </div>
+                </EditableSection>
               )
             })}
           </div>
         </div>
       </section>
-    </div>
+    </PageLivePreview>
   )
 }

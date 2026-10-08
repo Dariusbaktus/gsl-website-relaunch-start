@@ -1,0 +1,58 @@
+[
+  {
+    "name": "Lars Elkjaer",
+    "role": "Managing Partner",
+    "phone": "+49 421 3606 340",
+    "mobile": "+49 162 1935 807",
+    "email": "lars.elkjaer@gsl-germany.com",
+    "photo": "/media/team-lars-elkjaer.jpg"
+  },
+  {
+    "name": "Cord Jürgens",
+    "role": "Director Logistics",
+    "phone": "+49 421 3606 344",
+    "mobile": "+49 172 1844 989",
+    "email": "cord.juergens@gsl-germany.com",
+    "photo": "/media/team-cord-juergens.jpg"
+  },
+  {
+    "name": "Kai Jühdes",
+    "role": "Senior Chartering Manager Breakbulk",
+    "phone": "+49 421 3606 341",
+    "mobile": "+49 172 5179 836",
+    "email": "kai.juehdes@gsl-germany.com",
+    "photo": "/media/team-kai-juehdes.jpg"
+  },
+  {
+    "name": "Maureen I. Kobe",
+    "role": "Customer Service Breakbulk",
+    "phone": "+49 421 3606 350",
+    "mobile": "+49 172 4436 025",
+    "email": "maureen.kobe@gsl-germany.com",
+    "photo": "/media/team-maureen-kobe.jpg"
+  },
+  {
+    "name": "Sabine Krüger",
+    "role": "Customer Service Breakbulk",
+    "phone": "+49 421 3606 347",
+    "mobile": "+49 172 4193 036",
+    "email": "sabine.krueger@gsl-germany.com",
+    "photo": "/media/team-sabine-krueger.jpg"
+  },
+  {
+    "name": "Matthis Osmers",
+    "role": "Customer Service",
+    "phone": "+49 421 3606 343",
+    "mobile": "",
+    "email": "matthis.osmers@gsl-germany.com",
+    "photo": "/media/team-matthis-osmers.jpg"
+  },
+  {
+    "name": "Uwe M. Albrecht",
+    "role": "Port Services · Brake",
+    "phone": "+49 421 3606 243",
+    "mobile": "+49 171 2863 562",
+    "email": "uwe.albrecht@gsl-germany.com",
+    "photo": "/media/team-uwe-albrecht.jpg"
+  }
+]

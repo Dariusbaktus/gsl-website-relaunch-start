@@ -1,0 +1,56 @@
+[
+  {
+    "id": 1,
+    "filename": "cargo-1.jpg",
+    "alt": "Blick in den geöffneten Laderaum eines Bulkers, gefüllt mit weiß verpackten Schnittholzpaketen",
+    "src": "/media/cargo-1.jpg"
+  },
+  {
+    "id": 2,
+    "filename": "cargo-2.jpg",
+    "alt": "Stahlrohre an Hebegurten über dem geöffneten Laderaum",
+    "src": "/media/cargo-2.jpg"
+  },
+  {
+    "id": 3,
+    "filename": "cargo-3.jpg",
+    "alt": "Zwei Hafenkräne heben eine verpackte Ladungspartie über die Bordwand",
+    "src": "/media/cargo-3.jpg"
+  },
+  {
+    "id": 4,
+    "filename": "cargo-4.jpg",
+    "alt": "Kupferkathoden in Stapeln auf Paletten vor einer Lagerhalle",
+    "src": "/media/cargo-4.jpg"
+  },
+  {
+    "id": 5,
+    "filename": "cargo-5.jpg",
+    "alt": "Gestapeltes Rundholz auf dem Kai vor blauem Himmel",
+    "src": "/media/cargo-5.jpg"
+  },
+  {
+    "id": 6,
+    "filename": "cargo-6.jpg",
+    "alt": "In Folie verpackte Schnittholzpakete gestapelt am Kai",
+    "src": "/media/cargo-6.jpg"
+  },
+  {
+    "id": 7,
+    "filename": "cargo-7.jpg",
+    "alt": "Ein zylindrisches Schwergutteil hängt an Ketten über gestautem und verzurrtem Schnittholz",
+    "src": "/media/cargo-7.jpg"
+  },
+  {
+    "id": 8,
+    "filename": "cargo-8.jpg",
+    "alt": "Grünes Laschmaterial liegt aufgerollt am Kai neben verpackter Ladung und einem Gabelstapler",
+    "src": "/media/cargo-8.jpg"
+  },
+  {
+    "id": 9,
+    "filename": "cargo-9.jpg",
+    "alt": "Luftaufnahme eines Massengutfrachters längsseits am Kai",
+    "src": "/media/cargo-9.jpg"
+  }
+]

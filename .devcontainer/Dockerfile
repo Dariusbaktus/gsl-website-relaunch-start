@@ -22,6 +22,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     postgresql-client \
     sudo \
     ca-certificates \
+    bubblewrap \
     && ln -sf /usr/bin/fdfind /usr/local/bin/fd \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
@@ -45,8 +46,9 @@ RUN npm install -g @openai/codex \
     && codex --version
 
 # Setup workspace directory and ensure correct user permissions
+# Ensure node user owns npm global directories and binaries so global updates (e.g. Codex) can run without root
 RUN mkdir -p /workspace /home/node/.cache /home/node/.local /home/node/.pnpm-store \
-    && chown -R node:node /workspace /home/node
+    && chown -R node:node /workspace /home/node /usr/local/lib/node_modules /usr/local/bin /usr/local/share
 
 # Configure zsh default settings for node user
 USER node

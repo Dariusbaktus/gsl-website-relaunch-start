@@ -7,8 +7,13 @@ services:
       - ..:/workspace:cached
     working_dir: /workspace
     command: sleep infinity
+    ports:
+      - "3002:3002"
     environment:
       - DATABASE_URL=postgresql://payload:payload@postgres:5432/payload
+      - PAYLOAD_SECRET=a89f81d4b65287f311c873491a329df04104928b7245a498b301c238f972b93e
+      - NEXT_PUBLIC_SERVER_URL=http://localhost:3002
+      - PORT=3002
       - SHELL=/bin/zsh
     depends_on:
       postgres:
@@ -23,6 +28,8 @@ services:
       POSTGRES_PASSWORD: payload
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5434:5432"
     expose:
       - "5432"
     healthcheck:

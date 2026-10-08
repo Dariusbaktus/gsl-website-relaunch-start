@@ -28,5 +28,5 @@
     "DATABASE_URL": "postgresql://payload:payload@postgres:5432/payload",
     "SHELL": "/bin/zsh"
   },
-  "postCreateCommand": "if [ -f pnpm-lock.yaml ]; then pnpm install; elif [ -f package-lock.json ]; then npm install; elif [ -f yarn.lock ]; then yarn install; elif [ -f package.json ]; then pnpm install; fi"
+  "postCreateCommand": "sudo chown -R node:node /usr/local/lib/node_modules /usr/local/bin /usr/local/share 2>/dev/null || true; if [ -f pnpm-lock.yaml ]; then pnpm install; elif [ -f package-lock.json ]; then npm install; elif [ -f yarn.lock ]; then yarn install; elif [ -f package.json ]; then pnpm install; fi"
 }
